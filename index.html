@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concert Buddy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0d0d0d;
+      color: white;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(90deg, #ff4081, #7c4dff);
+      padding: 60px 20px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.2em;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    section {
+      padding: 60px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+    .feature-box {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 64, 129, 0.2);
+    }
+    .cta {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .cta button {
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    footer {
+      background: #1c1c1c;
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.9em;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Concert Buddy</h1>
+    <p>Find the perfect concert partner. Discover shows, post your plans, and connect with fellow fans.</p>
+  </header>
+
+  <section>
+    <h2>How It Works</h2>
+    <div class="features">
+      <div class="feature-box">
+        <h3>Post Your Concert Plans</h3>
+        <p>Let others know what shows you’re attending. Add dates, locations, and favorite artists.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Find Like-Minded Fans</h3>
+        <p>Browse posts from others looking for a concert buddy. Filter by genre, artist, or city.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Start Chatting</h3>
+        <p>Create an account to message other users, coordinate meetups, and enjoy the show together.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Coming Soon to the App Store</h2>
+    <p>Be the first to know when we launch. Sign up to join the waitlist today!</p>
+    <button>Join the Waitlist</button>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Concert Buddy. All rights reserved.</p>
+  </footer>
+</body>
+</html>
