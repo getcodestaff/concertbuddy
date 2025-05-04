@@ -1,0 +1,1 @@
+Final version of Concert Buddy with full functionality is being rebuilt after reset.
