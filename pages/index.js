@@ -3,6 +3,16 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Home() {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin }
+    });
+    if (error) alert(error.message);
+    else alert('Check your email for the login link!');
+  };
   const [form, setForm] = useState({ artist: '', city: '', genre: '', date: '', description: '' });
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -52,24 +62,7 @@ export default function Home() {
         <h2 className="text-4xl font-extrabold mb-4">Connect Over Music</h2>
         <p className="text-lg mb-6">Find concert buddies, share plans, and message fans who love what you love.</p>
         <a href="#post" className="bg-white text-blue-700 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition">Get Started</a>
-      
-<section id="login" className="max-w-xl mx-auto mt-12 bg-white p-6 rounded shadow text-gray-800">
-  <h2 className="text-xl font-bold mb-4 text-center">🔐 Log In with Magic Link</h2>
-  <form onSubmit={async (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin }
-    });
-    if (error) alert(error.message);
-    else alert('Check your email for the login link!');
-  }}>
-    <input name="email" type="email" required placeholder="Enter your email" className="w-full p-2 border rounded mb-4" />
-    <button type="submit" className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded">Send Magic Link</button>
-  </form>
-</section>
-
+      </section>
 
       <section id="features" className="max-w-5xl mx-auto px-6 py-16 space-y-12">
         <div className="grid md:grid-cols-3 gap-6 text-center">
@@ -92,7 +85,7 @@ export default function Home() {
         <section id="post" className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-4">🎫 Post a Concert</h2>
           {user ? (
-            <form onSubmit={handlePost} className="grid gap-4 md:grid-cols-2">
+            <form onSubmit={handleLogin} onSubmit={handlePost} className="grid gap-4 md:grid-cols-2">
               <input required placeholder="Artist" value={form.artist} onChange={e => setForm({ ...form, artist: e.target.value })} className="p-2 border rounded" />
               <input required placeholder="City" value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} className="p-2 border rounded" />
               <input required placeholder="Genre" value={form.genre} onChange={e => setForm({ ...form, genre: e.target.value })} className="p-2 border rounded" />
