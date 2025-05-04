@@ -1,7 +1,56 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [form, setForm] = useState({ artist: '', city: '', date: '', description: '' });
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    getUser();
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
+    if (!error) setPosts(data);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) alert(error.message);
+    else alert('Check your email for the login link');
+  };
+
+  const handlePost = async (e) => {
+    e.preventDefault();
+    if (!user) return alert('Please log in first');
+    const { artist, city, date, description } = form;
+    const { error } = await supabase.from('posts').insert([
+      {
+        user_id: user.id,
+        artist,
+        city,
+        date,
+        description,
+      },
+    ]);
+    if (error) return alert(error.message);
+    alert('Posted!');
+    setForm({ artist: '', city: '', date: '', description: '' });
+    fetchPosts();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-900 to-purple-900 text-white font-sans">
       <Head>
@@ -18,7 +67,6 @@ export default function Home() {
           <nav className="hidden md:flex gap-6 text-sm font-medium">
             <a href="#features" className="hover:text-gray-300">Features</a>
             <a href="#post" className="hover:text-gray-300">Post</a>
-            <a href="#chat" className="hover:text-gray-300">Chat</a>
             <a href="#login" className="hover:text-gray-300">Login</a>
           </nav>
         </div>
@@ -51,28 +99,43 @@ export default function Home() {
 
         <section id="post" className="bg-white text-gray-900 rounded-2xl shadow-2xl p-10">
           <h2 className="text-3xl font-bold mb-6 text-center">📅 Share a Concert Plan</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            <input placeholder="Artist Name" className="p-3 rounded border" />
-            <input placeholder="City" className="p-3 rounded border" />
-            <input type="date" className="p-3 rounded border col-span-2" />
-            <textarea placeholder="Extra details (venue, meetup spot)" className="p-3 rounded border col-span-2"></textarea>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-span-2">Post Your Plan</button>
-          </div>
+          {user ? (
+            <form onSubmit={handlePost} className="grid gap-6 md:grid-cols-2">
+              <input name="artist" value={form.artist} onChange={e => setForm({ ...form, artist: e.target.value })} placeholder="Artist Name" className="p-3 rounded border" required />
+              <input name="city" value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} placeholder="City" className="p-3 rounded border" required />
+              <input name="date" type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="p-3 rounded border col-span-2" required />
+              <textarea name="description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Details (venue, meetup spot)" className="p-3 rounded border col-span-2"></textarea>
+              <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-span-2">Post Your Plan</button>
+            </form>
+          ) : (
+            <p className="text-center text-gray-600">Log in to post a concert plan.</p>
+          )}
         </section>
 
-        <section id="chat" className="bg-white text-gray-900 rounded-2xl shadow-2xl p-10">
-          <h2 className="text-3xl font-bold mb-4 text-center">💬 Message a Buddy</h2>
-          <p className="text-center text-gray-700 mb-6">Coming soon: Real-time messaging for concert coordination.</p>
-          <div className="h-40 bg-gray-100 rounded flex items-center justify-center text-gray-500">Chat UI Placeholder</div>
+        <section className="bg-white text-gray-900 rounded-2xl shadow-2xl p-10">
+          <h2 className="text-3xl font-bold mb-6 text-center">📢 All Concert Posts</h2>
+          {posts.length > 0 ? (
+            <div className="space-y-6">
+              {posts.map(post => (
+                <div key={post.id} className="bg-gray-100 p-4 rounded shadow">
+                  <h3 className="text-xl font-bold">{post.artist} in {post.city}</h3>
+                  <p className="text-gray-700">{post.description}</p>
+                  <p className="text-sm text-gray-500 mt-2">{new Date(post.date).toLocaleDateString()}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-600">No concert posts yet.</p>
+          )}
         </section>
 
         <section id="login" className="bg-white text-gray-900 rounded-2xl shadow-2xl p-10">
-          <h2 className="text-3xl font-bold mb-4 text-center">🔐 Log In / Create Account</h2>
-          <p className="text-center text-gray-700 mb-6">Sign in to save your plans and connect with others.</p>
-          <div className="grid gap-4 md:grid-cols-2 max-w-xl mx-auto">
-            <input placeholder="Your Email" className="p-3 rounded border" />
-            <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Send Login Link</button>
-          </div>
+          <h2 className="text-3xl font-bold mb-4 text-center">🔐 Log In with Magic Link</h2>
+          <p className="text-center text-gray-700 mb-6">Sign in to share your plans and connect with others.</p>
+          <form onSubmit={handleLogin} className="grid gap-4 md:grid-cols-2 max-w-xl mx-auto">
+            <input type="email" placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} className="p-3 rounded border" required />
+            <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Send Login Link</button>
+          </form>
         </section>
       </main>
 
