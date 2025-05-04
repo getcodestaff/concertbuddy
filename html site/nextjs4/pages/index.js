@@ -37,13 +37,40 @@ export default function Home() {
       <Head>
         <title>Concert Buddy</title>
       </Head>
-      <main className="p-6 max-w-5xl mx-auto space-y-12">
-        <section className="text-center">
-          <h1 className="text-4xl font-bold mb-2">🎶 Concert Buddy</h1>
-          <p className="text-lg text-gray-700">Share shows, find fans, and start chatting!</p>
-        </section>
+      <header className="bg-blue-900 text-white py-4 px-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">🎵 Concert Buddy</h1>
+        <nav className="space-x-4">
+          <a href="#features" className="hover:underline">Features</a>
+          <a href="#post" className="hover:underline">Post</a>
+          <a href="#login" className="hover:underline">Login</a>
+        </nav>
+      </header>
 
-        <section className="bg-white p-6 rounded shadow">
+      <section className="text-center py-16 bg-gradient-to-r from-indigo-800 to-purple-800 text-white px-6">
+        <h2 className="text-4xl font-extrabold mb-4">Connect Over Music</h2>
+        <p className="text-lg mb-6">Find concert buddies, share plans, and message fans who love what you love.</p>
+        <a href="#post" className="bg-white text-blue-700 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition">Get Started</a>
+      </section>
+
+      <section id="features" className="max-w-5xl mx-auto px-6 py-16 space-y-12">
+        <div className="grid md:grid-cols-3 gap-6 text-center">
+          <div className="bg-white p-6 rounded shadow">
+            <h3 className="text-xl font-bold mb-2">🎤 Post Shows</h3>
+            <p>Let others know where you're going. Meet fans who share your taste.</p>
+          </div>
+          <div className="bg-white p-6 rounded shadow">
+            <h3 className="text-xl font-bold mb-2">🔎 Discover Fans</h3>
+            <p>Browse by artist, genre, or city and find others attending the same gigs.</p>
+          </div>
+          <div className="bg-white p-6 rounded shadow">
+            <h3 className="text-xl font-bold mb-2">💬 Chat Instantly</h3>
+            <p>Message fellow users to coordinate meetups or simply vibe over music.</p>
+          </div>
+        </div>
+      </section>
+
+      <main className="p-6 max-w-5xl mx-auto space-y-12">
+        <section id="post" className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-semibold mb-4">🎫 Post a Concert</h2>
           {user ? (
             <form onSubmit={handlePost} className="grid gap-4 md:grid-cols-2">
@@ -60,7 +87,7 @@ export default function Home() {
         </section>
 
         <section className="bg-white p-6 rounded shadow">
-          <h2 className="text-xl font-semibold mb-4">🔍 Browse Posts</h2>
+          <h2 className="text-xl font-semibold mb-4">📢 Browse Concerts</h2>
           <div className="grid gap-4 md:grid-cols-3 mb-4">
             <input placeholder="Filter by artist" value={filters.artist} onChange={e => setFilters({ ...filters, artist: e.target.value })} className="p-2 border rounded" />
             <input placeholder="Filter by city" value={filters.city} onChange={e => setFilters({ ...filters, city: e.target.value })} className="p-2 border rounded" />
