@@ -7,6 +7,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [filters, setFilters] = useState({ artist: '', city: '', genre: '' });
+  const [loginEmail, setLoginEmail] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -32,6 +33,16 @@ export default function Home() {
     fetchPosts();
   };
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithOtp({
+      email: loginEmail,
+      options: { emailRedirectTo: window.location.origin }
+    });
+    if (error) alert(error.message);
+    else alert('Check your email for the login link!');
+  };
+
   return (
     <>
       <Head>
@@ -42,7 +53,9 @@ export default function Home() {
         <nav className="space-x-4">
           <a href="#features" className="hover:underline">Features</a>
           <a href="#post" className="hover:underline">Post</a>
-          <a href="#login" className="hover:underline">Login</a>
+          <a href="/messages" className="hover:underline">Messages</a>
+          <a href="/profile" className="hover:underline">Profile</a>
+          <a href="/login" className="hover:underline">Login</a>
         </nav>
       </header>
 
@@ -50,6 +63,24 @@ export default function Home() {
         <h2 className="text-4xl font-extrabold mb-4">Connect Over Music</h2>
         <p className="text-lg mb-6">Find concert buddies, share plans, and message fans who love what you love.</p>
         <a href="#post" className="bg-white text-blue-700 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition">Get Started</a>
+      </section>
+
+      <section id="login" className="max-w-xl mx-auto mt-12 bg-white p-6 rounded shadow text-gray-800">
+        <h2 className="text-xl font-bold mb-4 text-center">🔐 Log In with Magic Link</h2>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            name="email"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            placeholder="Your email"
+            className="w-full p-2 border rounded mb-4"
+            required
+          />
+          <button type="submit" className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded">
+            Send Magic Link
+          </button>
+        </form>
       </section>
 
       <section id="features" className="max-w-5xl mx-auto px-6 py-16 space-y-12">
