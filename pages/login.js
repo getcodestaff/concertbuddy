@@ -22,10 +22,17 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid email.');
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin }
     });
+
     if (error) {
       alert(error.message);
     } else {
@@ -45,7 +52,10 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button type="submit" className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        >
           Send Magic Link
         </button>
       </form>
