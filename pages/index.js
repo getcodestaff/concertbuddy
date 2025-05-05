@@ -17,14 +17,15 @@ export default function Home() {
   }, []);
 
   const fetchPosts = async () => {
-    let query = supabase.from('posts').select('*, profiles(username)').order('date', { ascending: true });
-    const { artist, city, genre } = filters;
-    if (artist) query = query.ilike('artist', `%${artist}%`);
-    if (city) query = query.ilike('city', `%${city}%`);
-    if (genre) query = query.ilike('genre', `%${genre}%`);
-    const { data, error } = await query;
-    if (!error) setPosts(data);
-  };
+  console.log("Loading posts...");
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('date', { ascending: true });
+  console.log("Data:", data);
+  console.log("Error:", error);
+  if (!error) setPosts(data);
+};
 
   const handlePost = async (e) => {
     e.preventDefault();
