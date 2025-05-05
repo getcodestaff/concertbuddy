@@ -17,12 +17,16 @@ export default function Home() {
   }, []);
 
   const fetchPosts = async () => {
-    let query = supabase.from('posts').select('*, profiles(username)').order('date', { ascending: true });
-    const { artist, city, genre } = filters;
-    if (artist) query = query.ilike('artist', `%${artist}%`);
-    if (city) query = query.ilike('city', `%${city}%`);
-    if (genre) query = query.ilike('genre', `%${genre}%`);
+    console.log("Loading posts...");
+    let query = supabase.from('posts').select(`
+      id, artist, city, genre, date, description, user_id,
+      profiles!posts_user_id_fkey(username)
+    `).order('date', { ascending: true });
+
     const { data, error } = await query;
+    console.log("Data:", data);
+    console.log("Error:", error);
+
     if (!error) setPosts(data);
   };
 
@@ -144,7 +148,9 @@ export default function Home() {
                 <p>{post.description}</p>
                 {user && post.user_id !== user.id && (
                   <div className="mt-2">
-                    <button onClick={() => setReplyTo(post.user_id)} className="text-blue-600 underline">Message {post.profiles?.username || 'User'}</button>
+                    <button onClick={() => setReplyTo(post.user_id)} className="text-blue-600 underline">
+                      Message {post.profiles?.username || 'User'}
+                    </button>
                     {replyTo === post.user_id && (
                       <div className="mt-2">
                         <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full p-2 border rounded mb-2" placeholder="Type your message..." />
