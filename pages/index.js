@@ -18,17 +18,21 @@ export default function Home() {
 
   const fetchPosts = async () => {
     console.log("Loading posts...");
-    let query = supabase.from('posts').select(`
-      id, artist, city, genre, date, description, user_id,
-      profiles!posts_user_id_fkey(username)
-    `).order('date', { ascending: true });
-
+    let query = supabase
+      .from('posts')
+      .select(`
+        id, artist, city, genre, date, description, user_id,
+        profiles ( username )
+      `)
+      .order('date', { ascending: true });
+  
     const { data, error } = await query;
     console.log("Data:", data);
     console.log("Error:", error);
-
+  
     if (!error) setPosts(data);
   };
+  
 
   const handlePost = async (e) => {
     e.preventDefault();
