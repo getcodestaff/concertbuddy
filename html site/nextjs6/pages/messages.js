@@ -36,10 +36,10 @@ export default function Messages() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Inbox</h1>
+      <h1 className="text-2xl font-bold mb-4">Messages</h1>
       <div className="mb-4">
         <select value={receiver} onChange={(e) => setReceiver(e.target.value)} className="p-2 border rounded w-full mb-2">
-          <option value="">Select a user to message</option>
+          <option value="">Select user</option>
           {allUsers.map(u => (
             <option key={u.id} value={u.id}>{u.username}</option>
           ))}
