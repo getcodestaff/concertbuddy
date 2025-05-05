@@ -1,38 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function Login() {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        // ✅ Safe profile creation if not exists
+        await supabase.from('profiles').upsert({
+          id: user.id,
+          username: user.email.split('@')[0]
+        });
+      }
+    };
+    checkUser();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: window.location.origin }
     });
-    if (error) setMessage(error.message);
-    else setMessage('Check your email for the login link!');
+    if (error) {
+      alert(error.message);
+    } else {
+      alert('Check your email for the magic link!');
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow text-gray-800">
-      <h1 className="text-2xl font-bold mb-4">Login with Magic Link</h1>
+    <div className="max-w-md mx-auto mt-12 bg-white shadow rounded p-6">
+      <h2 className="text-xl font-bold mb-4">🔐 Log in with Magic Link</h2>
       <form onSubmit={handleLogin}>
         <input
           type="email"
-          name="email"
-          placeholder="Your email"
-          required
+          placeholder="you@example.com"
+          className="w-full p-2 border rounded mb-4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
+          required
         />
-        <button type="submit" className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded">
+        <button type="submit" className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded">
           Send Magic Link
         </button>
       </form>
-      {message && <p className="mt-4 text-sm">{message}</p>}
+      {user && (
+        <p className="mt-4 text-green-700">✅ Logged in as {user.email}</p>
+      )}
     </div>
   );
 }
